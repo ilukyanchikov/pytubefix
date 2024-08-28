@@ -13,6 +13,7 @@ from urllib import parse
 
 # Local imports
 from pytubefix import request
+from pytubefix.cache import FileTokenCache
 
 # YouTube on TV client secrets
 _client_id = '861556708454-d6dlm3lh05idd8npek18k6be8ba3oc68.apps.googleusercontent.com'
@@ -420,11 +421,10 @@ def _default_oauth_verifier(verification_url: str, user_code: str):
     input('Press enter when you have completed this step.')
 
 
-
 class InnerTube:
     """Object for interacting with the innertube API."""
 
-    def __init__(self, client='ANDROID_TESTSUITE', use_oauth=False, allow_cache=True, token_file=None, oauth_verifier=None):
+    def __init__(self, client='ANDROID_TESTSUITE', use_oauth=False, allow_cache=True, token_file=None, oauth_verifier=None, cache=None):
         """Initialize an InnerTube object.
 
         :param str client:
@@ -455,13 +455,17 @@ class InnerTube:
 
         # Try to load from file if specified
         self.token_file = token_file or _token_file
-        if self.use_oauth and self.allow_cache and os.path.exists(self.token_file):
-            with open(self.token_file) as f:
-                data = json.load(f)
-                self.access_token = data['access_token']
-                self.refresh_token = data['refresh_token']
-                self.expires = data['expires']
-                self.refresh_bearer_token()
+        self.cache = cache or FileTokenCache(self.token_file)
+        self.load_cache()
+
+    def load_cache(self):
+        """Load cache tokens form cache"""
+        data = self.cache.get_token()
+        if data:
+            self.access_token = data['access_token']
+            self.refresh_token = data['refresh_token']
+            self.expires = data['expires']
+            self.refresh_bearer_token()
 
     def cache_tokens(self):
         """Cache tokens to file if allowed."""
@@ -473,10 +477,7 @@ class InnerTube:
             'refresh_token': self.refresh_token,
             'expires': self.expires
         }
-        if not os.path.exists(_cache_dir):
-            os.mkdir(_cache_dir)
-        with open(self.token_file, 'w') as f:
-            json.dump(data, f)
+        self.cache.save_token(data)
 
     def refresh_bearer_token(self, force=False):
         """Refreshes the OAuth token if necessary.
@@ -512,10 +513,10 @@ class InnerTube:
         self.expires = start_time + response_data['expires_in']
         self.cache_tokens()
 
-    def fetch_bearer_token(self):
+    def get_auth_code(self):
         """Fetch an OAuth token."""
         # Subtracting 30 seconds is arbitrary to avoid potential time discrepencies
-        start_time = int(time.time() - 30)
+        self.start_time = int(time.time() - 30)
         data = {
             'client_id': _client_id,
             'scope': 'https://www.googleapis.com/auth/youtube'
@@ -529,10 +530,9 @@ class InnerTube:
             data=data
         )
         response_data = json.loads(response.read())
-        verification_url = response_data['verification_url']
-        user_code = response_data['user_code']
-        self.oauth_verifier(verification_url, user_code)
+        return response_data
 
+    def fetch_token(self, response_data):
         data = {
             'client_id': _client_id,
             'client_secret': _client_secret,
@@ -553,6 +553,14 @@ class InnerTube:
         self.refresh_token = response_data['refresh_token']
         self.expires = start_time + response_data['expires_in']
         self.cache_tokens()
+
+    def fetch_bearer_token(self):
+        """Fetch an OAuth token."""
+        response_data = self.get_auth_code()
+        verification_url = response_data['verification_url']
+        user_code = response_data['user_code']
+        self.oauth_verifier(verification_url, user_code)
+        self.fetch_token(response_data)
 
     @property
     def base_url(self):

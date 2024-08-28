@@ -39,6 +39,7 @@ from pytubefix import extract, request
 from pytubefix import Stream, StreamQuery
 from pytubefix.helpers import install_proxy
 from pytubefix.innertube import InnerTube
+from pytubefix.cache import TokenCache
 from pytubefix.metadata import YouTubeMetadata
 from pytubefix.monostate import Monostate
 
@@ -58,6 +59,7 @@ class YouTube:
             use_oauth: bool = False,
             allow_oauth_cache: bool = True,
             token_file: Optional[str] = None,
+            cache: Optional[TokenCache] = None,
             oauth_verifier: Optional[Callable[[str, str], None]] = None
     ):
         """Construct a :class:`YouTube <YouTube>`.
@@ -122,6 +124,7 @@ class YouTube:
         self.embed_url = f"https://www.youtube.com/embed/{self.video_id}"
 
         self.client = client
+        self.cache = cache
 
         self.fallback_clients = ['WEB']
 
@@ -256,7 +259,7 @@ class YouTube:
 
         stream_manifest = extract.apply_descrambler(self.streaming_data)
 
-        if InnerTube(self.client).require_js_player:
+        if InnerTube(self.client, cache=self.cache).require_js_player:
             # If the cached js doesn't work, try fetching a new js file
             # https://github.com/pytube/pytube/issues/1054
             try:
@@ -380,7 +383,8 @@ class YouTube:
             use_oauth=self.use_oauth,
             allow_cache=self.allow_oauth_cache,
             token_file=self.token_file,
-            oauth_verifier=self.oauth_verifier
+            oauth_verifier=self.oauth_verifier,
+            cache=self.cache
         )
         if innertube.require_js_player:
             innertube.innertube_context.update(self.signature_timestamp)
@@ -405,7 +409,8 @@ class YouTube:
             use_oauth=self.use_oauth,
             allow_cache=self.allow_oauth_cache,
             token_file=self.token_file,
-            oauth_verifier=self.oauth_verifier
+            oauth_verifier=self.oauth_verifier,
+            cache=self.cache
         )
 
         if innertube.require_js_player:
@@ -433,7 +438,7 @@ class YouTube:
         :rtype: List[Caption]
         """
 
-        innertube_response = InnerTube(client='WEB').player(self.video_id)
+        innertube_response = InnerTube(client='WEB', cache=self.cache).player(self.video_id)
 
         raw_tracks = (
             innertube_response.get("captions", {})
