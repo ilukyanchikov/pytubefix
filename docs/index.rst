@@ -68,7 +68,9 @@ of pytubefix.
    user/chapters
    user/dubbed_streams
    user/keymoments
-   user/problematic_characters
+   user/file_system
+   user/po_token
+   user/info
 
 The API Documentation
 -----------------------------

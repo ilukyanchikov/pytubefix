@@ -9,6 +9,7 @@ import json
 import os
 import pathlib
 import time
+from typing import Tuple
 from urllib import parse
 
 # Local imports
@@ -49,7 +50,8 @@ _default_clients = {
             'X-Youtube-Client-Version': '2.20240709.01.00'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': True
+        'require_js_player': True,
+        'require_po_token': True
     },
 
     'WEB_EMBED': {
@@ -69,7 +71,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '56'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': True
+        'require_js_player': True,
+        'require_po_token': False
     },
 
     'WEB_MUSIC': {
@@ -86,7 +89,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '67'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': True
+        'require_js_player': True,
+        'require_po_token': False
     },
 
     'WEB_CREATOR': {
@@ -103,7 +107,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '62'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': True
+        'require_js_player': True,
+        'require_po_token': False
     },
 
     'WEB_SAFARI': {
@@ -120,7 +125,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '1'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': True
+        'require_js_player': True,
+        'require_po_token': True
     },
 
     'MWEB': {
@@ -137,7 +143,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '2'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': True
+        'require_js_player': True,
+        'require_po_token': False
     },
 
     'ANDROID': {
@@ -158,7 +165,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '3'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': True
     },
 
     # Deprecated
@@ -201,7 +209,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '28'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     },
 
     'ANDROID_MUSIC': {
@@ -221,7 +230,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '21'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     },
 
     'ANDROID_CREATOR': {
@@ -241,7 +251,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '14'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     },
 
     'ANDROID_TESTSUITE': {
@@ -263,7 +274,8 @@ _default_clients = {
             'X-Youtube-Client-Version': '1.9'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     },
 
     'ANDROID_PRODUCER': {
@@ -283,7 +295,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '91'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     },
 
     'IOS': {
@@ -305,7 +318,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '5'
         },
         'api_key': 'AIzaSyB-63vPrdThhKuerbB2N_l7Kwwcxj6yUAc',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     },
 
     # Deprecated
@@ -350,7 +364,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '26'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     },
 
     'IOS_CREATOR': {
@@ -371,7 +386,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '15'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     },
 
     'TV_EMBED': {
@@ -390,7 +406,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '85'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': True
+        'require_js_player': True,
+        'require_po_token': False
     },
 
     'MEDIA_CONNECT': {
@@ -407,7 +424,8 @@ _default_clients = {
             'X-Youtube-Client-Name': '95'
         },
         'api_key': 'AIzaSyAO_FJ2SlqU8Q4STEHLGCilw_Y9_11qcW8',
-        'require_js_player': False
+        'require_js_player': False,
+        'require_po_token': False
     }
 }
 _token_timeout = 1800
@@ -421,10 +439,31 @@ def _default_oauth_verifier(verification_url: str, user_code: str):
     input('Press enter when you have completed this step.')
 
 
+def _default_po_token_verifier() -> Tuple[str, str]:
+    """
+    Requests the visitorData and po_token with an input and returns a tuple[visitorData: str, po_token: str]
+    """
+    print('You can use the tool: https://github.com/YunzheZJU/youtube-po-token-generator, to get the token')
+    visitor_data = str(input("Enter with your visitorData: "))
+    po_token = str(input("Enter with your po_token: "))
+    return visitor_data, po_token
+
+
 class InnerTube:
     """Object for interacting with the innertube API."""
 
-    def __init__(self, client='ANDROID_TESTSUITE', use_oauth=False, allow_cache=True, token_file=None, oauth_verifier=None, cache=None):
+    def __init__(
+            self,
+            client='ANDROID_VR',
+            use_oauth=False,
+            allow_cache=True,
+            token_file=None,
+            oauth_verifier=None,
+            cache=None,
+            use_po_token=False,
+            po_token_verifier=None
+
+    ):
         """Initialize an InnerTube object.
 
         :param str client:
@@ -432,20 +471,37 @@ class InnerTube:
             The default is ANDROID_TESTSUITE because there is no need to decrypt the
             signature cipher and throttling parameter.
         :param bool use_oauth:
-            Whether or not to authenticate to YouTube.
+            (Optional) Whether or not to authenticate to YouTube.
         :param bool allow_cache:
-            Allows caching of oauth tokens on the machine.
+            (Optional) Allows caching of oauth tokens on the machine.
+        :param str token_file:
+            (Optional) Path to the file where the OAuth and Po tokens will be stored.
+            Defaults to None, which means the tokens will be stored in the pytubefix/__cache__ directory.
         :param Callable oauth_verifier:
-            Verifier to be used for getting outh tokens. 
+            (Optional) Verifier to be used for getting outh tokens.
             Verification URL and User-Code will be passed to it respectively. 
             (if passed, else default verifier will be used)
+        :param bool use_po_token:
+            (Optional) Whether or not to use po_token to bypass YouTube bot detector.
+            It must be sent with the API along with the linked visitorData and
+            then passed as a `po_token` query parameter to affected clients.
+        :param Callable po_token_verifier:
+            (Optional) Verified used to obtain the visitorData and po_token.
+            The verifier will return the visitorData and po_token respectively.
+            (if passed, else default verifier will be used)
         """
+        self.client_name = client
         self.innertube_context = _default_clients[client]['innertube_context']
         self.header = _default_clients[client]['header']
         self.api_key = _default_clients[client]['api_key']
         self.require_js_player = _default_clients[client]['require_js_player']
+        self.require_po_token = _default_clients[client]['require_po_token']
         self.access_token = None
         self.refresh_token = None
+
+        self.access_po_token = None
+        self.access_visitorData = None
+
         self.use_oauth = use_oauth
         self.allow_cache = allow_cache
         self.oauth_verifier = oauth_verifier or _default_oauth_verifier
@@ -453,10 +509,28 @@ class InnerTube:
         # Stored as epoch time
         self.expires = None
 
+        self.use_po_token = use_po_token
+        self.po_token_verifier = po_token_verifier or _default_po_token_verifier
+
         # Try to load from file if specified
         self.token_file = token_file or _token_file
         self.cache = cache or FileTokenCache(self.token_file)
         self.load_cache()
+
+    def load_cache(self):
+        """Load cache tokens form cache"""
+        data = self.cache.get_token()
+        if data:
+            self.access_token = data['access_token']
+            self.refresh_token = data['refresh_token']
+            self.expires = data['expires']
+            self.refresh_bearer_token()
+
+        if self.use_po_token and self.allow_cache and os.path.exists(self.token_file):
+            with open(self.token_file) as f:
+                data = json.load(f)
+                self.access_visitorData = data['visitorData']
+                self.access_po_token = data['po_token']
 
     def load_cache(self):
         """Load cache tokens form cache"""
@@ -475,7 +549,9 @@ class InnerTube:
         data = {
             'access_token': self.access_token,
             'refresh_token': self.refresh_token,
-            'expires': self.expires
+            'expires': self.expires,
+            'visitorData': self.access_visitorData,
+            'po_token': self.access_po_token
         }
         self.cache.save_token(data)
 
@@ -562,8 +638,32 @@ class InnerTube:
         self.oauth_verifier(verification_url, user_code)
         self.fetch_token(response_data)
 
+
+    def insert_po_token(self) -> None:
+        """
+        Insert visitorData and po_token in the API request
+        """
+        self.innertube_context['context']['client'].update({
+            "visitorData": self.access_visitorData
+        })
+
+        self.innertube_context.update({
+            "serviceIntegrityDimensions": {
+                "poToken": self.access_po_token
+            }
+        })
+
+    def fetch_po_token(self) -> None:
+        """
+        Requests visitorData and po_token, the default function is _default_po_token_verifier.
+        """
+        self.access_visitorData, self.access_po_token = self.po_token_verifier()
+        self.cache_tokens()
+
+        self.insert_po_token()
+
     @property
-    def base_url(self):
+    def base_url(self) -> str:
         """Return the base url endpoint for the innertube API."""
         return 'https://www.youtube.com/youtubei/v1'
 
@@ -598,6 +698,13 @@ class InnerTube:
 
             headers['Authorization'] = f'Bearer {self.access_token}'
 
+        # Add the po_token if applicable
+        if self.use_po_token:
+            if self.access_po_token:
+                self.insert_po_token()
+            else:
+                self.fetch_po_token()
+
         headers.update(self.header)
 
         response = request._execute_request(
@@ -608,12 +715,34 @@ class InnerTube:
         )
         return json.loads(response.read())
 
-    def browse(self):
+    def browse(self, continuation=None, visitor_data=None):
         """Make a request to the browse endpoint.
+
+        :param str continuation:
+            Continuation token if there is pagination
+        :param str visitor_data:
+            Visitor Data, required to get YouTube Shorts
+        :rtype: dict
+        :returns:
+            Raw browse info results.
+        """
+        endpoint = f'{self.base_url}/browse'
+
+        query = self.base_params
+
+        if continuation:
+            self.base_data.update({"continuation": continuation})
+        if visitor_data:
+            self.base_data['context']['client'].update({"visitorData": visitor_data})
+
+        return self._call_api(endpoint, query, self.base_data)
+
+    def reel(self):
+        """Make a request to the reel endpoint.
 
         TODO: Figure out how we can use this
         """
-        # endpoint = f'{self.base_url}/browse'  # noqa:E800
+        # endpoint = f'{self.base_url}/reel'  # noqa:E800
         ...
         # return self._call_api(endpoint, query, self.base_data)  # noqa:E800
 
@@ -635,14 +764,28 @@ class InnerTube:
         ...
         # return self._call_api(endpoint, query, self.base_data)  # noqa:E800
 
-    def next(self):
+    def next(self, video_id: str = None, continuation: str = None):
         """Make a request to the next endpoint.
 
-        TODO: Figure out how we can use this
+        :param str video_id:
+            The video id to get player details for.
+        :param str continuation:
+            Continuation token if there is pagination
+        :rtype: dict
+        :returns:
+            Raw player details results.
         """
-        # endpoint = f'{self.base_url}/next'  # noqa:E800
-        ...
-        # return self._call_api(endpoint, query, self.base_data)  # noqa:E800
+
+        if continuation:
+            self.base_data.update({"continuation": continuation})
+
+        if video_id:
+            self.base_data.update({'videoId': video_id, 'contentCheckOk': "true"})
+
+        endpoint = f'{self.base_url}/next'
+        query = self.base_params
+
+        return self._call_api(endpoint, query, self.base_data)
 
     def player(self, video_id):
         """Make a request to the player endpoint.
@@ -659,18 +802,23 @@ class InnerTube:
         self.base_data.update({'videoId': video_id, 'contentCheckOk': "true"})
         return self._call_api(endpoint, query, self.base_data)
 
-    def search(self, search_query, continuation=None):
+    def search(self, search_query, continuation=None, data=None):
         """Make a request to the search endpoint.
 
         :param str search_query:
             The query to search.
+        :param str continuation:
+            Continuation token if there is pagination
+        :param dict data:
+            Additional data to send with the request.
         :rtype: dict
         :returns:
             Raw search query results.
         """
         endpoint = f'{self.base_url}/search'
         query = self.base_params
-        data = {}
+        data = data if data else {}
+
         self.base_data.update({'query': search_query})
         if continuation:
             data['continuation'] = continuation
